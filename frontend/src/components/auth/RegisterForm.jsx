@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = ({ onSwitchToLogin }) => {
     const [formData, setFormData] = useState({
@@ -14,6 +15,8 @@ const RegisterForm = ({ onSwitchToLogin }) => {
     const [success, setSuccess] = useState('');
 
     const { register, isLoading } = useAuth();
+
+    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         setError('');
@@ -46,8 +49,12 @@ const RegisterForm = ({ onSwitchToLogin }) => {
         }
     };
 
+    const handleLogin = () => {
+        navigate('/login');
+    };
+
     return (
-        <div className="w-full max-w-md mx-auto">
+        <div className="w-full max-w-md mx-auto p-3">
             <div className="bg-white rounded-2xl shadow-2xl p-8">
                 <div className="text-center mb-8">
                     <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -158,7 +165,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
                     <p className="text-gray-600">
                         Already have an account?{' '}
                         <button
-                            onClick={onSwitchToLogin}
+                            onClick={handleLogin}
                             className="text-purple-600 hover:text-purple-700 font-medium"
                         >
                             Sign in here

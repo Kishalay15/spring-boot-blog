@@ -5,7 +5,7 @@ import RegisterForm from './components/auth/RegisterForm';
 import Dashboard from './components/Dashboard';
 import Posts from './components/Posts';
 import Navbar from './components/Navbar';
-import ProfilePage from './components/ProfilePage'; // We'll define this next
+import ProfilePage from './components/ProfilePage';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();

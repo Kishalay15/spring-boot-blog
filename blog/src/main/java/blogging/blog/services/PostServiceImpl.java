@@ -94,7 +94,7 @@ public class PostServiceImpl implements PostServices {
         @Override
         public PostResponse getAllPosts(Integer pageNumber, Integer pageSize, String sortBy) {
 
-                Pageable p = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+                Pageable p = PageRequest.of(pageNumber, pageSize, Sort.by("addedDate").descending());
 
                 Page<Post> pagePost = this.postRepo.findAll(p);
                 List<Post> posts = pagePost.getContent();
@@ -173,7 +173,6 @@ public class PostServiceImpl implements PostServices {
 
                 return categoryPosts;
         }
-
         private PostCreateDto entityToPostCreateDto(Post post) {
 
                 List<Comment> comments = post.getComments();

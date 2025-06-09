@@ -14,6 +14,10 @@ const LoginForm = ({ onSwitchToRegister }) => {
     const { login, isLoading } = useAuth();
     const navigate = useNavigate();
 
+    const handleRegister = () => {
+        navigate('/register');
+    };
+
     const handleSubmit = async () => {
         setError('');
 
@@ -44,7 +48,7 @@ const LoginForm = ({ onSwitchToRegister }) => {
     };
 
     return (
-        <div className="w-full max-w-md mx-auto">
+        <div className="w-full max-w-md mx-auto p-4">
             <div className="bg-white rounded-2xl shadow-2xl p-8">
                 <div className="text-center mb-8">
                     <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -117,7 +121,7 @@ const LoginForm = ({ onSwitchToRegister }) => {
                     <p className="text-gray-600">
                         Don't have an account?{' '}
                         <button
-                            onClick={onSwitchToRegister}
+                            onClick={handleRegister}
                             className="text-purple-600 hover:text-purple-700 font-medium"
                         >
                             Sign up here

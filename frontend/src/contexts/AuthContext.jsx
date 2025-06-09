@@ -1,10 +1,11 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const BASE_URL = 'http://localhost:9090';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
     const [user, setUser] = useState(() => {
         const storedUser = localStorage.getItem('user');
         return storedUser ? JSON.parse(storedUser) : null;
@@ -80,7 +81,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     // NEW: fetch full user profile
-    const fetchUserProfile = async (userId) => {
+    const fetchUserProfile = useCallback(async (userId) => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
@@ -91,14 +92,14 @@ export const AuthProvider = ({ children }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                setUser(data); // update user object fully (id, email, about, etc.)
+                setUser(data);
             } else {
                 console.error('Failed to fetch user profile');
             }
         } catch (error) {
             console.error('Error fetching user profile:', error);
         }
-    };
+    }, []);
 
     return (
         <AuthContext.Provider value={{ user, login, register, logout, fetchUserProfile, isLoading }}>

@@ -62,7 +62,7 @@ public class PostController {
 
     @PutMapping("/user/{userId}/category/{categoryId}/posts/{postId}")
     public ResponseEntity<PostDto> updatePost(
-            @RequestBody PostDto postdto,
+            @Valid @RequestBody PostDto postdto,
             @PathVariable Integer postId,
             @PathVariable Integer userId,
             @PathVariable Integer categoryId) {
@@ -125,7 +125,7 @@ public class PostController {
         return new ResponseEntity<>(postDto, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}/category/{categoryId}/posts")
+    @GetMapping("/user/{userId}/category/{categoryId}/posts/view")
     public ResponseEntity<List<PostCreateDto>> getUserPostsByCategory(
 
             @PathVariable Integer userId,
