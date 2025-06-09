@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, BookOpen } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -11,6 +12,7 @@ const LoginForm = ({ onSwitchToRegister }) => {
     const [error, setError] = useState('');
 
     const { login, isLoading } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         setError('');
@@ -23,6 +25,8 @@ const LoginForm = ({ onSwitchToRegister }) => {
         const result = await login(formData.email, formData.password);
         if (!result.success) {
             setError(result.error);
+        } else {
+            navigate('/posts');
         }
     };
 

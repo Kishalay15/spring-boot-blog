@@ -1,11 +1,14 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const BASE_URL = 'http://localhost:9090';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
     const [isLoading, setIsLoading] = useState(false);
 
     const login = async (email, password) => {
@@ -20,7 +23,12 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('token', data.jwtToken);
-                setUser({ id: data.userId, email });
+
+                const userObj = { id: data.userId, email };
+                setUser(userObj);
+
+                localStorage.setItem('user', JSON.stringify(userObj));
+
                 return { success: true };
             } else {
                 const error = await response.json();
@@ -35,9 +43,16 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setUser(null);
     };
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     const register = async (userData) => {
         setIsLoading(true);
@@ -64,8 +79,29 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // NEW: fetch full user profile
+    const fetchUserProfile = async (userId) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setUser(data); // update user object fully (id, email, about, etc.)
+            } else {
+                console.error('Failed to fetch user profile');
+            }
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+        <AuthContext.Provider value={{ user, login, register, logout, fetchUserProfile, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

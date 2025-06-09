@@ -150,7 +150,7 @@ function Posts() {
     const [commentAuthors, setCommentAuthors] = useState({}); // comment.userId -> name
 
     useEffect(() => {
-        fetch('http://localhost:9090/api/posts/')
+        fetch('http://localhost:9090/api/posts')
             .then(res => res.json())
             .then(async data => {
                 const postList = data.content || [];
@@ -167,6 +167,18 @@ function Posts() {
             })
             .catch(() => setLoading(false));
     }, []);
+
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            // hour: '2-digit',
+            // minute: '2-digit',
+        });
+    };
+
 
     const handleToggleComments = async (postId, comments) => {
         setExpandedComments(prev => ({ ...prev, [postId]: !prev[postId] }));
@@ -261,7 +273,7 @@ function Posts() {
                                         </button>
                                         <div className="text-xs text-gray-400 flex items-center self-start sm:self-auto">
                                             <Clock className="w-3 h-3 mr-1 flex-shrink-0" />
-                                            Just now
+                                            {formatDate(post.addedDate)}
                                         </div>
                                     </div>
 
@@ -277,7 +289,7 @@ function Posts() {
                                                         {comment.content}
                                                     </p>
                                                     <p className="text-xs sm:text-sm text-gray-500">
-                                                        — {commentAuthors[comment.userId] || `User #${comment.userId}`}
+                                                        — {commentAuthors[comment.userId] || `User #${comment.userId}`}, {formatDate(comment.addedDate)}
                                                     </p>
                                                 </div>
                                             ))}

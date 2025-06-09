@@ -186,6 +186,7 @@ public class PostServiceImpl implements PostServices {
                 pcdto.setUserId(post.getUser().getId());
                 pcdto.setCategoryId(post.getCategory().getCategoryId());
                 pcdto.setComments(commentDtos);
+                pcdto.setAddedDate(post.getAddedDate());
 
                 return pcdto;
         }

@@ -1,6 +1,7 @@
 package blogging.blog.payloads;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -22,6 +23,8 @@ public class PostCreateDto {
     @NotEmpty
     @Size(min = 10, message = "Post content must be minimum 10 characters")
     private String postContent;
+
+    private Date addedDate;
 
     private Integer userId;
     private Integer categoryId;
