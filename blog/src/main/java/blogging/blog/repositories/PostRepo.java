@@ -16,4 +16,6 @@ public interface PostRepo extends JpaRepository<Post, Integer> {
 
     List<Post> findByPostTitleContaining(String keyword);
 
+    long countByUser_Id(Integer userId);
+
 }

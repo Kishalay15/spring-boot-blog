@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserServices {
 
         oldUser.setName(userDto.getName());
         oldUser.setEmail(userDto.getEmail());
-        oldUser.setPassword(userDto.getPassword());
+        oldUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         oldUser.setAbout(userDto.getAbout());
         User updatedUser = this.userRepo.save(oldUser);
 

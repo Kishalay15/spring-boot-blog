@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const USER_CACHE = new Map();
-const API_BASE_URL = "http://localhost:9090/api";
+export const API_BASE_URL = "http://localhost:9090/api";
 
 export const getUserById = async (userId) => {
   if (USER_CACHE.has(userId)) return USER_CACHE.get(userId);
@@ -54,4 +54,45 @@ export const fetchPostsByUserId = async (userId) => {
   });
 
   return response.data;
+};
+
+export const deleteComment = async (commentId) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${API_BASE_URL}/comment/${commentId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to delete comment");
+  }
+
+  return true;
+};
+
+export const createComment = async ({ postId, userId, content }) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    `${API_BASE_URL}/users/${userId}/posts/${postId}/comments`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content }),
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to create comment");
+  }
+
+  return await res.json();
 };
