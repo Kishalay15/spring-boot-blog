@@ -88,13 +88,13 @@ blog/
 ### Backend
 
 ```bash
-cd server
-./mvnw spring-boot:run
+cd blog
+mvn spring-boot:run
 ```
 
 ### Frontend
 ```bash
-cd client
+cd frontend
 npm install
 npm run dev
 ```
