@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../utils/api';
 
 const EditUserModal = ({ userId, isOpen, onClose, onUpdate }) => {
@@ -14,10 +15,14 @@ const EditUserModal = ({ userId, isOpen, onClose, onUpdate }) => {
         if (isOpen && userId) {
             const fetchUser = async () => {
                 const token = localStorage.getItem('token');
-                const res = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setFormData({ ...res.data, password: '' });
+                try {
+                    const res = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    setFormData({ ...res.data, password: '' });
+                } catch (err) {
+                    toast.error("Failed to fetch user data");
+                }
             };
             fetchUser();
         }
@@ -31,14 +36,49 @@ const EditUserModal = ({ userId, isOpen, onClose, onUpdate }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
+
+        if (!formData.password.trim()) {
+            toast.error("Please enter your password to confirm changes");
+            return;
+        }
+
         try {
-            const res = await axios.put(`${API_BASE_URL}/users/${userId}`, formData, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            // 1. Verify password
+            await axios.post(
+                `${API_BASE_URL}/auth/verify-password`,
+                {
+                    username: formData.email, // using updated email (in case it's changed)
+                    password: formData.password,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            // 2. If verified, update profile
+            const updatedData = { ...formData };
+            const res = await axios.put(
+                `${API_BASE_URL}/users/${userId}`,
+                updatedData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            toast.success("Profile updated successfully");
             onUpdate(res.data);
             onClose();
         } catch (err) {
-            console.error("Update failed", err.response?.data || err.message);
+            if (err.response?.status === 401) {
+                toast.error("Incorrect password");
+            } else {
+                toast.error("Update failed");
+            }
+            console.error("Update error:", err.response?.data || err.message);
         }
     };
 
@@ -70,7 +110,7 @@ const EditUserModal = ({ userId, isOpen, onClose, onUpdate }) => {
                     <input
                         type="password"
                         name="password"
-                        placeholder="New Password"
+                        placeholder="Enter current password to save changes"
                         value={formData.password}
                         onChange={handleChange}
                         className="w-full border rounded px-3 py-2"

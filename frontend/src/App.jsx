@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import Posts from './components/Posts';
 import Navbar from './components/Navbar';
 import ProfilePage from './components/ProfilePage';
+import { Toaster } from 'react-hot-toast';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ function ProtectedRoute({ children }) {
 function AppContent() {
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
       <Routes>
         <Route path="/" element={<Navigate to="/posts" />} />

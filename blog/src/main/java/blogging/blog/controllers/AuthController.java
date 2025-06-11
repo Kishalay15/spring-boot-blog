@@ -76,4 +76,16 @@ public class AuthController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/verify-password")
+    public ResponseEntity<?> verifyPassword(@RequestBody JwtAuthRequest request) {
+
+        try {
+            authenticate(request.getUsername(), request.getPassword());
+            return ResponseEntity.ok("Password is correct");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+        }
+
+    }
+
 }
